@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.openai/
+.vscode/
+coverage/
+*.log
+*.zip
+.DS_Store

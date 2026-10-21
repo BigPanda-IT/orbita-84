@@ -1,0 +1,24 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: #06191b;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  color: #f4ecd7;
+  background: radial-gradient(circle at 18% 22%, rgba(62, 187, 164, 0.13), transparent 28%),
+    radial-gradient(circle at 82% 10%, rgba(238, 105, 64, 0.12), transparent 24%), #06191b;
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
