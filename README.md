@@ -4,7 +4,7 @@
 
 ## Играть онлайн
 
-После публикации игра будет доступна по адресу: [bigpanda-it.github.io/orbita-84](https://bigpanda-it.github.io/orbita-84/).
+Игра доступна по адресу: [bigpanda-it.github.io/orbita-84](https://bigpanda-it.github.io/orbita-84/).
 
 ## Запуск
 
