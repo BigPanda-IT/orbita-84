@@ -369,7 +369,7 @@ export const App = () => {
                             <span>Избегайте помех ×</span>
                           </p>
                           <div className={style.startGuide}>
-                            <span>← → Движение</span>
+                            <span>Движение</span>
                             <span>3 жизни</span>
                           </div>
                           <button type="button" className={style.startButton} onClick={startGame}>
