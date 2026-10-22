@@ -8,6 +8,7 @@ import {
   getLevel,
   getSpawnInterval,
   getSpeed,
+  getTimeSpeedStep,
   isReceiverContact,
   resolveCatch,
 } from '../../game/gameLogic';
@@ -22,6 +23,14 @@ type FallingItem = {
   lane: number;
   y: number;
 };
+
+const RocketIcon = ({ className }: { className: string }) => (
+  <svg className={className} viewBox="0 0 32 40" aria-hidden="true">
+    <path d="M16 2C10 7 8 15 9 25h14c1-10-1-18-7-23Z" />
+    <circle cx="16" cy="14" r="3" />
+    <path d="m9 21-5 8 6-2m13-6 5 8-6-2M12 29l-2 8 6-6 6 6-2-8" />
+  </svg>
+);
 
 const getStoredBestScore = (): number => {
   const parsedScore = Number(window.localStorage.getItem('orbita-84-best'));
@@ -44,9 +53,10 @@ const useGameRefs = (score: number, lives: number, combo: number, playerLane: nu
   const livesRef = useLatestValue(lives);
   const comboRef = useLatestValue(combo);
   const playerLaneRef = useLatestValue(playerLane);
+  const elapsedSecondsRef = useRef(0);
   const audioContextRef = useRef<AudioContext | null>(null);
 
-  return { audioContextRef, comboRef, itemId, livesRef, playerLaneRef, scoreRef };
+  return { audioContextRef, comboRef, elapsedSecondsRef, itemId, livesRef, playerLaneRef, scoreRef };
 };
 
 export const App = () => {
@@ -59,7 +69,7 @@ export const App = () => {
   const [items, setItems] = useState<FallingItem[]>([]);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [message, setMessage] = useState('Система готова');
-  const { audioContextRef, comboRef, itemId, livesRef, playerLaneRef, scoreRef } = useGameRefs(
+  const { audioContextRef, comboRef, elapsedSecondsRef, itemId, livesRef, playerLaneRef, scoreRef } = useGameRefs(
     score,
     lives,
     combo,
@@ -136,6 +146,7 @@ export const App = () => {
     livesRef.current = GAME_CONFIG.startingLives;
     setCombo(0);
     comboRef.current = 0;
+    elapsedSecondsRef.current = 0;
     setPlayerLane(1);
     playerLaneRef.current = 1;
     setItems([]);
@@ -217,6 +228,14 @@ export const App = () => {
     const animate = (currentTime: number) => {
       const deltaSeconds = Math.min((currentTime - previousTime) / 1000, 0.05);
       previousTime = currentTime;
+      const previousTimeSpeedStep = getTimeSpeedStep(elapsedSecondsRef.current);
+      elapsedSecondsRef.current += deltaSeconds;
+      const nextTimeSpeedStep = getTimeSpeedStep(elapsedSecondsRef.current);
+
+      if (nextTimeSpeedStep > previousTimeSpeedStep) {
+        setMessage(`Скорость +${GAME_CONFIG.timeSpeedIncreasePercent}%`);
+        playTone(720, 0.12);
+      }
 
       setItems((currentItems) => {
         let scoreDelta = 0;
@@ -225,7 +244,7 @@ export const App = () => {
         const caught = { signal: false, glitch: false, core: false };
 
         const remainingItems = currentItems.reduce<FallingItem[]>((remaining, item) => {
-          const nextY = item.y + getSpeed(scoreRef.current) * deltaSeconds;
+          const nextY = item.y + getSpeed(scoreRef.current, elapsedSecondsRef.current) * deltaSeconds;
           const canCollide = isReceiverContact(nextY, item.lane, playerLaneRef.current);
 
           if (canCollide) {
@@ -258,7 +277,7 @@ export const App = () => {
           setMessage(`Уровень ${String(leveledUpTo).padStart(2, '0')} · скорость ↑`);
           playTone(760, 0.15);
         } else if (caught.core) {
-          setMessage('Энергия +1');
+          setMessage('Сердце +1');
           playTone(660, 0.12);
         } else if (caught.glitch) {
           setMessage('Сбой системы');
@@ -295,16 +314,19 @@ export const App = () => {
             Удержите связь
             <br />с орбитой.
           </h1>
-          <p>Ловите сигналы ◆, собирайте энергоблоки ✦ и не подпускайте помехи × к приёмнику.</p>
+          <p>Ловите сигналы ◆, собирайте сердца ♥ и не подпускайте ракеты к приёмнику.</p>
           <div className={style.legend}>
             <span>
               <i aria-hidden="true">◆</i> сигнал +10
             </span>
             <span>
-              <i aria-hidden="true">✦</i> энергия +25
+              <i aria-hidden="true">♥</i> сердце +25
             </span>
             <span>
-              <i aria-hidden="true">×</i> помеха −1
+              <i aria-hidden="true">
+                <RocketIcon className={style.legendRocket} />
+              </i>{' '}
+              ракета −1
             </span>
           </div>
         </aside>
@@ -323,7 +345,7 @@ export const App = () => {
                     SCORE <strong>{String(score).padStart(4, '0')}</strong>
                   </span>
                   <span>LV {String(getLevel(score)).padStart(2, '0')}</span>
-                  <span className={style.lives} aria-label={`Энергия: ${lives}`}>
+                  <span className={style.lives} aria-label={`Жизни: ${lives}`}>
                     {Array.from({ length: GAME_CONFIG.startingLives }, (_, index) => (
                       <i key={index} className={classNames(index < lives && style.lifeActive)} />
                     ))}
@@ -345,8 +367,8 @@ export const App = () => {
                       }}
                     >
                       {item.kind === 'signal' && <span>◆</span>}
-                      {item.kind === 'core' && <span>✦</span>}
-                      {item.kind === 'glitch' && <span>×</span>}
+                      {item.kind === 'core' && <span>♥</span>}
+                      {item.kind === 'glitch' && <RocketIcon className={style.rocketIcon} />}
                     </div>
                   ))}
                   <div
@@ -366,7 +388,7 @@ export const App = () => {
                           <h2>ОРБИТА-84</h2>
                           <p className={style.startDescription}>
                             <span>Ловите сигналы ◆</span>
-                            <span>Избегайте помех ×</span>
+                            <span>Избегайте ракет</span>
                           </p>
                           <div className={style.startGuide}>
                             <span>Движение</span>

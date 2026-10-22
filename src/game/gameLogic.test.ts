@@ -1,6 +1,14 @@
 import { describe, expect, test } from 'vitest';
 
-import { chooseItemKind, getLevel, getSpawnInterval, getSpeed, isReceiverContact, resolveCatch } from './gameLogic';
+import {
+  chooseItemKind,
+  getLevel,
+  getSpawnInterval,
+  getSpeed,
+  getTimeSpeedStep,
+  isReceiverContact,
+  resolveCatch,
+} from './gameLogic';
 
 describe('game logic', () => {
   test('five caught signals activate the x2 score multiplier', () => {
@@ -32,5 +40,12 @@ describe('game logic', () => {
     expect(isReceiverContact(75.99, 1, 1)).toBe(false);
     expect(isReceiverContact(76, 1, 1)).toBe(true);
     expect(isReceiverContact(76, 2, 1)).toBe(false);
+  });
+
+  test('speed increases by five percent after every thirty seconds of active play', () => {
+    expect(getTimeSpeedStep(29.99)).toBe(0);
+    expect(getTimeSpeedStep(30)).toBe(1);
+    expect(getSpeed(0, 30)).toBeCloseTo(getSpeed(0, 0) * 1.05);
+    expect(getSpeed(0, 60)).toBeCloseTo(getSpeed(0, 0) * 1.05 ** 2);
   });
 });

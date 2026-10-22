@@ -4,6 +4,8 @@ export const GAME_CONFIG = {
   startingLives: 3,
   startingSpeed: 19,
   speedStep: 4,
+  timeSpeedIncreaseIntervalSeconds: 30,
+  timeSpeedIncreasePercent: 5,
   maxSpeed: 43,
   spawnInterval: 960,
   spawnIntervalStep: 90,
@@ -25,6 +27,6 @@ export type ItemKind = 'signal' | 'glitch' | 'core';
 
 export const ITEM_LABELS: Record<ItemKind, string> = {
   signal: 'Сигнал',
-  glitch: 'Помеха',
-  core: 'Энергоблок',
+  glitch: 'Ракета-помеха',
+  core: 'Сердце связи',
 };

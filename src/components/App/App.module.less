@@ -275,26 +275,55 @@ footer {
 .signal::before,
 .signal::after {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  box-sizing: border-box;
   border: 1px solid currentColor;
   border-radius: 50%;
   content: '';
+  transform: translate(-50%, -50%);
 }
 .signal::before {
-  inset: 2px;
+  width: 30px;
+  height: 30px;
   opacity: 0.38;
 }
 .signal::after {
-  inset: 7px;
+  width: 20px;
+  height: 20px;
   opacity: 0.58;
 }
+.signal span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  transform: translateY(-1px);
+}
 .core {
-  border: 2px solid @lcd-ink;
-  background: rgba(232, 238, 176, 0.5);
-  font-size: 22px;
+  font-size: 30px;
 }
 .glitch {
-  border: 3px double @lcd-ink;
-  background: repeating-linear-gradient(45deg, transparent 0 3px, rgba(36, 55, 45, 0.22) 3px 5px);
+  background: none;
+}
+.rocketIcon {
+  width: 30px;
+  height: 36px;
+}
+.rocketIcon,
+.legendRocket {
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.legendRocket {
+  width: 14px;
+  height: 17px;
 }
 
 .ship {
