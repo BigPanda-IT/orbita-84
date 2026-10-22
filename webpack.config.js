@@ -6,7 +6,7 @@ const config = () => ({
   devtool: 'eval-source-map',
   mode: 'development',
   output: {
-    filename: 'bundle.js',
+    filename: 'bundle.[contenthash:8].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: './',
     clean: true,
