@@ -13,7 +13,13 @@ export const getSpeed = (score: number): number =>
   Math.min(GAME_CONFIG.startingSpeed + (getLevel(score) - 1) * GAME_CONFIG.speedStep, GAME_CONFIG.maxSpeed);
 
 export const getSpawnInterval = (score: number): number =>
-  Math.max(GAME_CONFIG.spawnInterval - (getLevel(score) - 1) * 55, GAME_CONFIG.minSpawnInterval);
+  Math.max(
+    GAME_CONFIG.spawnInterval - (getLevel(score) - 1) * GAME_CONFIG.spawnIntervalStep,
+    GAME_CONFIG.minSpawnInterval,
+  );
+
+export const isReceiverContact = (itemBottom: number, itemLane: number, receiverLane: number): boolean =>
+  itemLane === receiverLane && itemBottom >= GAME_CONFIG.collisionStart && itemBottom <= GAME_CONFIG.collisionEnd;
 
 export const resolveCatch = (kind: ItemKind, combo: number, lives: number): CatchResult => {
   if (kind === 'glitch') {

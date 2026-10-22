@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { chooseItemKind, getLevel, resolveCatch } from './gameLogic';
+import { chooseItemKind, getLevel, getSpawnInterval, getSpeed, isReceiverContact, resolveCatch } from './gameLogic';
 
 describe('game logic', () => {
   test('five caught signals activate the x2 score multiplier', () => {
@@ -20,9 +20,17 @@ describe('game logic', () => {
   });
 
   test('difficulty level and item ranges follow the config', () => {
-    expect(getLevel(160)).toBe(3);
+    expect(getLevel(120)).toBe(3);
+    expect(getSpeed(60)).toBeGreaterThan(getSpeed(0));
+    expect(getSpawnInterval(60)).toBeLessThan(getSpawnInterval(0));
     expect(chooseItemKind(0.02)).toBe('core');
     expect(chooseItemKind(0.2)).toBe('glitch');
     expect(chooseItemKind(0.8)).toBe('signal');
+  });
+
+  test('an item is caught as soon as its lower edge touches the receiver antenna', () => {
+    expect(isReceiverContact(75.99, 1, 1)).toBe(false);
+    expect(isReceiverContact(76, 1, 1)).toBe(true);
+    expect(isReceiverContact(76, 2, 1)).toBe(false);
   });
 });

@@ -3,7 +3,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { ItemKind } from '../../game/config';
 import { GAME_CONFIG, ITEM_LABELS } from '../../game/config';
-import { chooseItemKind, getLevel, getSpawnInterval, getSpeed, resolveCatch } from '../../game/gameLogic';
+import {
+  chooseItemKind,
+  getLevel,
+  getSpawnInterval,
+  getSpeed,
+  isReceiverContact,
+  resolveCatch,
+} from '../../game/gameLogic';
 
 import style from './App.module.less';
 
@@ -31,6 +38,17 @@ const useLatestValue = <T,>(value: T) => {
   return valueRef;
 };
 
+const useGameRefs = (score: number, lives: number, combo: number, playerLane: number) => {
+  const itemId = useRef(0);
+  const scoreRef = useLatestValue(score);
+  const livesRef = useLatestValue(lives);
+  const comboRef = useLatestValue(combo);
+  const playerLaneRef = useLatestValue(playerLane);
+  const audioContextRef = useRef<AudioContext | null>(null);
+
+  return { audioContextRef, comboRef, itemId, livesRef, playerLaneRef, scoreRef };
+};
+
 export const App = () => {
   const [status, setStatus] = useState<GameStatus>('start');
   const [score, setScore] = useState(0);
@@ -41,12 +59,12 @@ export const App = () => {
   const [items, setItems] = useState<FallingItem[]>([]);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [message, setMessage] = useState('СИСТЕМА ГОТОВА');
-  const itemId = useRef(0);
-  const scoreRef = useLatestValue(score);
-  const livesRef = useLatestValue(lives);
-  const comboRef = useLatestValue(combo);
-  const playerLaneRef = useLatestValue(playerLane);
-  const audioContextRef = useRef<AudioContext | null>(null);
+  const { audioContextRef, comboRef, itemId, livesRef, playerLaneRef, scoreRef } = useGameRefs(
+    score,
+    lives,
+    combo,
+    playerLane,
+  );
 
   const playTone = useCallback(
     (frequency: number, duration = 0.07) => {
@@ -95,6 +113,20 @@ export const App = () => {
       playTone(74, 0.4);
     },
     [playTone],
+  );
+
+  const applyScoreDelta = useCallback(
+    (scoreDelta: number): number | null => {
+      if (scoreDelta === 0) return null;
+
+      const previousLevel = getLevel(scoreRef.current);
+      scoreRef.current += scoreDelta;
+      setScore(scoreRef.current);
+      const nextLevel = getLevel(scoreRef.current);
+
+      return nextLevel > previousLevel ? nextLevel : null;
+    },
+    [scoreRef],
   );
 
   const startGame = useCallback(() => {
@@ -194,10 +226,7 @@ export const App = () => {
 
         const remainingItems = currentItems.reduce<FallingItem[]>((remaining, item) => {
           const nextY = item.y + getSpeed(scoreRef.current) * deltaSeconds;
-          const canCollide =
-            nextY >= GAME_CONFIG.collisionStart &&
-            nextY <= GAME_CONFIG.collisionEnd &&
-            item.lane === playerLaneRef.current;
+          const canCollide = isReceiverContact(nextY, item.lane, playerLaneRef.current);
 
           if (canCollide) {
             const result = resolveCatch(item.kind, nextCombo, livesRef.current + livesDelta);
@@ -213,10 +242,7 @@ export const App = () => {
           return remaining;
         }, []);
 
-        if (scoreDelta !== 0) {
-          scoreRef.current += scoreDelta;
-          setScore(scoreRef.current);
-        }
+        const leveledUpTo = applyScoreDelta(scoreDelta);
         if (nextCombo !== comboRef.current) {
           comboRef.current = nextCombo;
           setCombo(nextCombo);
@@ -228,7 +254,10 @@ export const App = () => {
           if (nextLives === 0) finishGame(scoreRef.current);
         }
 
-        if (caught.core) {
+        if (leveledUpTo !== null) {
+          setMessage(`УРОВЕНЬ ${String(leveledUpTo).padStart(2, '0')} · СКОРОСТЬ ↑`);
+          playTone(760, 0.15);
+        } else if (caught.core) {
           setMessage('ЭНЕРГИЯ +1');
           playTone(660, 0.12);
         } else if (caught.glitch) {
@@ -246,7 +275,7 @@ export const App = () => {
 
     animationFrame = window.requestAnimationFrame(animate);
     return () => window.cancelAnimationFrame(animationFrame);
-  }, [finishGame, playTone, status]);
+  }, [applyScoreDelta, finishGame, playTone, status]);
 
   return (
     <main className={style.app}>
@@ -266,16 +295,16 @@ export const App = () => {
             Удержите связь
             <br />с орбитой.
           </h1>
-          <p>Ловите зелёные сигналы, берегите энергоблоки и не подпускайте помехи к приёмнику.</p>
+          <p>Ловите сигналы ◆, собирайте энергоблоки ✦ и не подпускайте помехи × к приёмнику.</p>
           <div className={style.legend}>
             <span>
-              <i className={style.signalDot} /> сигнал +10
+              <i aria-hidden="true">◆</i> сигнал +10
             </span>
             <span>
-              <i className={style.coreDot} /> энергия +25
+              <i aria-hidden="true">✦</i> энергия +25
             </span>
             <span>
-              <i className={style.glitchDot} /> помеха −1
+              <i aria-hidden="true">×</i> помеха −1
             </span>
           </div>
         </aside>
@@ -320,7 +349,11 @@ export const App = () => {
                       {item.kind === 'glitch' && <span>×</span>}
                     </div>
                   ))}
-                  <div className={style.ship} style={{ left: `${(playerLane + 0.5) * 25}%` }} aria-label="Приёмник">
+                  <div
+                    className={style.ship}
+                    style={{ left: `${(playerLane + 0.5) * 25}%`, top: `${GAME_CONFIG.collisionStart}%` }}
+                    aria-label="Приёмник"
+                  >
                     <i />
                     <span />
                   </div>
@@ -475,15 +508,15 @@ export const App = () => {
               <span>ПЕРВЫЙ КОНТАКТ</span>
               <b>10</b>
             </div>
-            <div className={classNames(score >= 80 && style.achievementUnlocked)}>
+            <div className={classNames(score >= 60 && style.achievementUnlocked)}>
               <i>02</i>
               <span>ЧИСТАЯ ЧАСТОТА</span>
-              <b>80</b>
+              <b>60</b>
             </div>
-            <div className={classNames(score >= 160 && style.achievementUnlocked)}>
+            <div className={classNames(score >= 120 && style.achievementUnlocked)}>
               <i>03</i>
               <span>ГЛУБОКИЙ КОСМОС</span>
-              <b>160</b>
+              <b>120</b>
             </div>
           </div>
           <div className={style.bestScore}>
