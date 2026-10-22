@@ -424,18 +424,22 @@ footer {
 }
 
 .deviceInfo {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
   padding: 10px 5px 8px;
   color: #82432d;
   font: 700 12px/1.25 @ui;
   letter-spacing: 0.02em;
 }
 .deviceInfo strong {
+  justify-self: center;
   color: @ink;
   font-size: 16px;
   letter-spacing: 0.1em;
+}
+.deviceInfo > span:last-child {
+  justify-self: end;
 }
 
 .controls {
@@ -448,7 +452,7 @@ footer {
 }
 .moveControls {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   align-items: flex-start;
   justify-content: center;
   flex-wrap: nowrap;
@@ -470,8 +474,8 @@ footer {
 
 .roundButton {
   display: grid;
-  width: 58px;
-  height: 58px;
+  width: 52px;
+  height: 52px;
   place-items: center;
   border: 0;
   border-radius: 50%;
@@ -497,8 +501,8 @@ footer {
 
 .switchButton {
   width: 100%;
-  max-width: 105px;
-  padding: 9px 10px;
+  max-width: 92px;
+  padding: 8px;
   border: 1px solid rgba(34, 53, 48, 0.4);
   border-radius: 5px;
   color: #364b43;
@@ -758,11 +762,11 @@ footer {
     gap: 10px;
   }
   .roundButton {
-    width: 58px;
-    height: 58px;
+    width: 50px;
+    height: 50px;
   }
   .switchButton {
-    max-width: 90px;
+    max-width: 82px;
     padding-right: 5px;
     padding-left: 5px;
     font-size: 12px;
