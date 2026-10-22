@@ -42,10 +42,10 @@ describe('game logic', () => {
     expect(isReceiverContact(76, 2, 1)).toBe(false);
   });
 
-  test('speed increases by five percent after every thirty seconds of active play', () => {
-    expect(getTimeSpeedStep(29.99)).toBe(0);
-    expect(getTimeSpeedStep(30)).toBe(1);
-    expect(getSpeed(0, 30)).toBeCloseTo(getSpeed(0, 0) * 1.05);
-    expect(getSpeed(0, 60)).toBeCloseTo(getSpeed(0, 0) * 1.05 ** 2);
+  test('speed increases by ten percent after every fifteen seconds of active play', () => {
+    expect(getTimeSpeedStep(14.99)).toBe(0);
+    expect(getTimeSpeedStep(15)).toBe(1);
+    expect(getSpeed(0, 15)).toBeCloseTo(getSpeed(0, 0) * 1.1);
+    expect(getSpeed(0, 30)).toBeCloseTo(getSpeed(0, 0) * 1.1 ** 2);
   });
 });

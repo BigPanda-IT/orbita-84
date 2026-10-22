@@ -32,6 +32,14 @@ const RocketIcon = ({ className }: { className: string }) => (
   </svg>
 );
 
+const SignalIcon = () => (
+  <svg className={style.signalIcon} viewBox="0 0 36 36" aria-hidden="true">
+    <circle cx="18" cy="18" r="14" />
+    <circle cx="18" cy="18" r="9.5" />
+    <path className={style.signalCore} d="m18 13 5 5-5 5-5-5Z" />
+  </svg>
+);
+
 const getStoredBestScore = (): number => {
   const parsedScore = Number(window.localStorage.getItem('orbita-84-best'));
   return Number.isFinite(parsedScore) ? parsedScore : 0;
@@ -366,7 +374,7 @@ export const App = () => {
                         top: `${item.y}%`,
                       }}
                     >
-                      {item.kind === 'signal' && <span>◆</span>}
+                      {item.kind === 'signal' && <SignalIcon />}
                       {item.kind === 'core' && <span>♥</span>}
                       {item.kind === 'glitch' && <RocketIcon className={style.rocketIcon} />}
                     </div>
