@@ -364,17 +364,26 @@ footer {
 }
 .overlay h2 {
   margin: 0;
-  font: 900 clamp(30px, 5vw, 48px) / 1 @mono;
-  letter-spacing: -0.1em;
+  font: 700 clamp(30px, 5vw, 48px) / 1 'Courier New', monospace;
+  letter-spacing: -0.06em;
 }
 .overlay p {
   max-width: 260px;
   margin: 10px 0 12px;
   font: 600 16px/1.45 @ui;
 }
+.startDescription {
+  display: grid;
+  gap: 1px;
+}
+.startDescription span {
+  display: block;
+}
 .startGuide {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
+  width: min(100%, 220px);
   margin-bottom: 14px;
 }
 .startGuide span {
@@ -395,7 +404,7 @@ footer {
   cursor: pointer;
 }
 .overlay .startButton {
-  min-width: 150px;
+  width: min(100%, 220px);
   border-color: #8a3824;
   color: #fff6df;
   background: @orange;

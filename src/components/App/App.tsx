@@ -364,7 +364,10 @@ export const App = () => {
                         <>
                           <span className={style.overlayCode}>Готово к запуску</span>
                           <h2>ОРБИТА-84</h2>
-                          <p>Ловите сигналы ◆ и избегайте помех ×</p>
+                          <p className={style.startDescription}>
+                            <span>Ловите сигналы ◆</span>
+                            <span>Избегайте помех ×</span>
+                          </p>
                           <div className={style.startGuide}>
                             <span>← → Движение</span>
                             <span>3 жизни</span>
