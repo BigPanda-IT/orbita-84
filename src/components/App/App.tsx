@@ -35,8 +35,7 @@ const RocketIcon = ({ className }: { className: string }) => (
 const SignalIcon = () => (
   <svg className={style.signalIcon} viewBox="0 0 36 36" aria-hidden="true">
     <circle cx="18" cy="18" r="14" />
-    <circle cx="18" cy="18" r="9.5" />
-    <path className={style.signalCore} d="m18 13 5 5-5 5-5-5Z" />
+    <path className={style.signalCore} d="m18 10 8 8-8 8-8-8Z" />
   </svg>
 );
 
