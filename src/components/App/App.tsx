@@ -58,7 +58,7 @@ export const App = () => {
   const [playerLane, setPlayerLane] = useState(1);
   const [items, setItems] = useState<FallingItem[]>([]);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [message, setMessage] = useState('СИСТЕМА ГОТОВА');
+  const [message, setMessage] = useState('Система готова');
   const { audioContextRef, comboRef, itemId, livesRef, playerLaneRef, scoreRef } = useGameRefs(
     score,
     lives,
@@ -104,7 +104,7 @@ export const App = () => {
   const finishGame = useCallback(
     (finalScore: number) => {
       setStatus('gameover');
-      setMessage('СВЯЗЬ ПОТЕРЯНА');
+      setMessage('Связь потеряна');
       setBestScore((currentBest) => {
         const nextBest = Math.max(currentBest, finalScore);
         window.localStorage.setItem('orbita-84-best', String(nextBest));
@@ -139,7 +139,7 @@ export const App = () => {
     setPlayerLane(1);
     playerLaneRef.current = 1;
     setItems([]);
-    setMessage('ПРИЁМ СИГНАЛА');
+    setMessage('Приём сигнала');
     setStatus('playing');
     playTone(440, 0.08);
   }, [playTone]);
@@ -147,11 +147,11 @@ export const App = () => {
   const togglePause = useCallback(() => {
     setStatus((currentStatus) => {
       if (currentStatus === 'playing') {
-        setMessage('ПАУЗА');
+        setMessage('Пауза');
         return 'paused';
       }
       if (currentStatus === 'paused') {
-        setMessage('ПРИЁМ СИГНАЛА');
+        setMessage('Приём сигнала');
         return 'playing';
       }
       return currentStatus;
@@ -185,7 +185,7 @@ export const App = () => {
     const pauseWhenHidden = () => {
       if (document.hidden && status === 'playing') {
         setStatus('paused');
-        setMessage('ПАУЗА');
+        setMessage('Пауза');
       }
     };
 
@@ -255,16 +255,16 @@ export const App = () => {
         }
 
         if (leveledUpTo !== null) {
-          setMessage(`УРОВЕНЬ ${String(leveledUpTo).padStart(2, '0')} · СКОРОСТЬ ↑`);
+          setMessage(`Уровень ${String(leveledUpTo).padStart(2, '0')} · скорость ↑`);
           playTone(760, 0.15);
         } else if (caught.core) {
-          setMessage('ЭНЕРГИЯ +1');
+          setMessage('Энергия +1');
           playTone(660, 0.12);
         } else if (caught.glitch) {
-          setMessage('СБОЙ СИСТЕМЫ');
+          setMessage('Сбой системы');
           playTone(92, 0.16);
         } else if (caught.signal) {
-          setMessage(nextCombo > 0 && nextCombo % 5 === 0 ? 'МНОЖИТЕЛЬ!' : 'СИГНАЛ ПРИНЯТ');
+          setMessage(nextCombo > 0 && nextCombo % 5 === 0 ? 'Множитель!' : 'Сигнал принят');
           playTone(320 + Math.min(nextCombo, 10) * 18);
         }
         return remainingItems;
@@ -362,35 +362,35 @@ export const App = () => {
                     <div className={style.overlay}>
                       {status === 'start' && (
                         <>
-                          <span className={style.overlayCode}>ИГРА ГОТОВА</span>
+                          <span className={style.overlayCode}>Готово к запуску</span>
                           <h2>ОРБИТА-84</h2>
                           <p>Ловите сигналы ◆ и избегайте помех ×</p>
                           <div className={style.startGuide}>
-                            <span>← → ДВИЖЕНИЕ</span>
-                            <span>3 ЖИЗНИ</span>
+                            <span>← → Движение</span>
+                            <span>3 жизни</span>
                           </div>
                           <button type="button" className={style.startButton} onClick={startGame}>
-                            ИГРАТЬ
+                            Играть
                           </button>
-                          <small className={style.startShortcut}>ENTER ИЛИ КНОПКА «ИГРАТЬ»</small>
+                          <small className={style.startShortcut}>Enter или кнопка «Играть»</small>
                         </>
                       )}
                       {status === 'paused' && (
                         <>
-                          <span className={style.overlayCode}>СИГНАЛ ЗАМОРОЖЕН</span>
-                          <h2>ПАУЗА</h2>
+                          <span className={style.overlayCode}>Приём приостановлен</span>
+                          <h2>Пауза</h2>
                           <button type="button" onClick={togglePause}>
-                            ПРОДОЛЖИТЬ
+                            Продолжить
                           </button>
                         </>
                       )}
                       {status === 'gameover' && (
                         <>
-                          <span className={style.overlayCode}>МИССИЯ ЗАВЕРШЕНА</span>
+                          <span className={style.overlayCode}>Миссия завершена</span>
                           <h2>{String(score).padStart(4, '0')}</h2>
                           <p>Лучший сигнал: {String(bestScore).padStart(4, '0')}</p>
                           <button type="button" onClick={startGame}>
-                            ЕЩЁ РАЗ
+                            Ещё раз
                           </button>
                         </>
                       )}
@@ -399,15 +399,15 @@ export const App = () => {
                 </div>
                 <div className={style.ticker} aria-live="polite">
                   <span>{message}</span>
-                  <span>COMBO {String(combo).padStart(2, '0')}</span>
+                  <span>Серия {String(combo).padStart(2, '0')}</span>
                 </div>
               </div>
             </div>
 
             <div className={style.deviceInfo}>
-              <span>КОСМИЧЕСКАЯ СВЯЗЬ</span>
+              <span>Космическая связь</span>
               <strong>{GAME_CONFIG.title}</strong>
-              <span>ЖК ЭКРАН</span>
+              <span>ЖК-экран</span>
             </div>
             <div className={style.controls}>
               <button
@@ -416,7 +416,7 @@ export const App = () => {
                 onClick={togglePause}
                 disabled={status === 'start' || status === 'gameover'}
               >
-                ПАУЗА
+                Пауза
               </button>
               <div className={style.moveControls} aria-label="Управление движением">
                 <div className={style.moveControl}>
@@ -448,7 +448,7 @@ export const App = () => {
                 onClick={() => setSoundEnabled((current) => !current)}
                 aria-pressed={soundEnabled}
               >
-                ЗВУК {soundEnabled ? 'ВКЛ' : 'ВЫКЛ'}
+                Звук {soundEnabled ? 'вкл' : 'выкл'}
               </button>
             </div>
             <div className={style.speaker} aria-hidden="true">
