@@ -4,8 +4,7 @@ export const GAME_CONFIG = {
   startingLives: 3,
   startingSpeed: 19,
   speedStep: 4,
-  timeSpeedIncreaseIntervalSeconds: 15,
-  timeSpeedIncreasePercent: 10,
+  timeSpeedIncreaseIntervalSeconds: 10,
   maxSpeed: 43,
   spawnInterval: 960,
   spawnIntervalStep: 90,
@@ -14,7 +13,7 @@ export const GAME_CONFIG = {
   collisionStart: 76,
   collisionEnd: 94,
   despawnAt: 106,
-  bonusChance: 0.09,
+  bonusChance: 0.03,
   glitchChance: 0.28,
   keys: {
     left: ['ArrowLeft', 'KeyA'],
@@ -30,3 +29,4 @@ export const ITEM_LABELS: Record<ItemKind, string> = {
   glitch: 'Ракета-помеха',
   core: 'Сердце связи',
 };
+

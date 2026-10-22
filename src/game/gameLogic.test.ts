@@ -29,10 +29,9 @@ describe('game logic', () => {
 
   test('difficulty level and item ranges follow the config', () => {
     expect(getLevel(120)).toBe(3);
-    expect(getSpeed(60)).toBeGreaterThan(getSpeed(0));
     expect(getSpawnInterval(60)).toBeLessThan(getSpawnInterval(0));
     expect(chooseItemKind(0.02)).toBe('core');
-    expect(chooseItemKind(0.2)).toBe('glitch');
+    expect(chooseItemKind(0.03)).toBe('glitch');
     expect(chooseItemKind(0.8)).toBe('signal');
   });
 
@@ -42,10 +41,12 @@ describe('game logic', () => {
     expect(isReceiverContact(76, 2, 1)).toBe(false);
   });
 
-  test('speed increases by ten percent after every fifteen seconds of active play', () => {
-    expect(getTimeSpeedStep(14.99)).toBe(0);
-    expect(getTimeSpeedStep(15)).toBe(1);
-    expect(getSpeed(0, 15)).toBeCloseTo(getSpeed(0, 0) * 1.1);
-    expect(getSpeed(0, 30)).toBeCloseTo(getSpeed(0, 0) * 1.1 ** 2);
+  test('speed increases linearly every ten seconds of active play', () => {
+    expect(getTimeSpeedStep(9.99)).toBe(0);
+    expect(getTimeSpeedStep(10)).toBe(1);
+    expect(getSpeed(10)).toBe(getSpeed(0) + 4);
+    expect(getSpeed(20)).toBe(getSpeed(0) + 8);
+    expect(getSpeed(120)).toBe(43);
   });
 });
+

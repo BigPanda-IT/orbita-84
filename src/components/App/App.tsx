@@ -26,9 +26,10 @@ type FallingItem = {
 
 const RocketIcon = ({ className }: { className: string }) => (
   <svg className={className} viewBox="0 0 32 40" aria-hidden="true">
-    <path d="M16 2C10 7 8 15 9 25h14c1-10-1-18-7-23Z" />
-    <circle cx="16" cy="14" r="3" />
-    <path d="m9 21-5 8 6-2m13-6 5 8-6-2M12 29l-2 8 6-6 6 6-2-8" />
+    <path className={style.rocketBody} d="M16 2C9 7 7 16 9 27h14c2-11 0-20-7-25Z" />
+    <circle className={style.rocketWindow} cx="16" cy="14" r="3.5" />
+    <path className={style.rocketFins} d="M9 21 3 31l8-3m12-7 6 10-8-3" />
+    <path className={style.rocketFlame} d="m11 28-3 10 8-6 8 6-3-10-5 4-5-4Z" />
   </svg>
 );
 
@@ -240,7 +241,7 @@ export const App = () => {
       const nextTimeSpeedStep = getTimeSpeedStep(elapsedSecondsRef.current);
 
       if (nextTimeSpeedStep > previousTimeSpeedStep) {
-        setMessage(`Скорость +${GAME_CONFIG.timeSpeedIncreasePercent}%`);
+        setMessage(`Скорость +${GAME_CONFIG.speedStep}`);
         playTone(720, 0.12);
       }
 
@@ -251,7 +252,7 @@ export const App = () => {
         const caught = { signal: false, glitch: false, core: false };
 
         const remainingItems = currentItems.reduce<FallingItem[]>((remaining, item) => {
-          const nextY = item.y + getSpeed(scoreRef.current, elapsedSecondsRef.current) * deltaSeconds;
+          const nextY = item.y + getSpeed(elapsedSecondsRef.current) * deltaSeconds;
           const canCollide = isReceiverContact(nextY, item.lane, playerLaneRef.current);
 
           if (canCollide) {
@@ -281,7 +282,7 @@ export const App = () => {
         }
 
         if (leveledUpTo !== null) {
-          setMessage(`Уровень ${String(leveledUpTo).padStart(2, '0')} · скорость ↑`);
+          setMessage(`Уровень ${String(leveledUpTo).padStart(2, '0')}`);
           playTone(760, 0.15);
         } else if (caught.core) {
           setMessage('Сердце +1');
@@ -564,3 +565,4 @@ export const App = () => {
     </main>
   );
 };
+

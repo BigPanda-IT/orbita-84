@@ -12,12 +12,8 @@ export const getLevel = (score: number): number => Math.floor(score / GAME_CONFI
 export const getTimeSpeedStep = (elapsedSeconds: number): number =>
   Math.floor(elapsedSeconds / GAME_CONFIG.timeSpeedIncreaseIntervalSeconds);
 
-export const getSpeed = (score: number, elapsedSeconds = 0): number => {
-  const scoreSpeed = GAME_CONFIG.startingSpeed + (getLevel(score) - 1) * GAME_CONFIG.speedStep;
-  const timeMultiplier = (1 + GAME_CONFIG.timeSpeedIncreasePercent / 100) ** getTimeSpeedStep(elapsedSeconds);
-
-  return Math.min(scoreSpeed * timeMultiplier, GAME_CONFIG.maxSpeed);
-};
+export const getSpeed = (elapsedSeconds = 0): number =>
+  Math.min(GAME_CONFIG.startingSpeed + getTimeSpeedStep(elapsedSeconds) * GAME_CONFIG.speedStep, GAME_CONFIG.maxSpeed);
 
 export const getSpawnInterval = (score: number): number =>
   Math.max(
@@ -52,3 +48,4 @@ export const chooseItemKind = (roll: number): ItemKind => {
   if (roll < GAME_CONFIG.bonusChance + GAME_CONFIG.glitchChance) return 'glitch';
   return 'signal';
 };
+

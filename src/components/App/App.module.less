@@ -297,21 +297,38 @@ footer {
   background: none;
 }
 .rocketIcon {
-  width: 30px;
-  height: 36px;
+  width: 46px;
+  height: 56px;
+  transform: rotate(180deg);
+  filter: drop-shadow(2px 2px 0 rgba(36, 55, 45, 0.24));
 }
 .rocketIcon,
 .legendRocket {
   overflow: visible;
   fill: none;
   stroke: currentColor;
-  stroke-width: 2.2;
+  stroke-width: 2.6;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+.rocketBody {
+  fill: currentColor;
+}
+.rocketWindow {
+  fill: @lcd;
+  stroke-width: 2;
+}
+.rocketFins,
+.rocketFlame {
+  fill: currentColor;
 }
 .legendRocket {
   width: 14px;
   height: 17px;
+  transform: rotate(180deg);
+}
+.legendRocket .rocketWindow {
+  fill: @ink;
 }
 
 .ship {
@@ -818,3 +835,4 @@ footer {
     transition-duration: 0.01ms !important;
   }
 }
+
